@@ -13,11 +13,15 @@
   <!-- Adding the modules, API key, and map constant needed for a full screen map app -->
   <script>
   
-    require([
-     "esri/config",
-      "esri/Map",
-      "esri/views/MapView"
-    ], function (esriConfig,Map, MapView) {
+    require([  
+    "esri/config",  
+    "esri/Map",  
+    "esri/views/MapView",   
+    "esri/Graphic",  
+    "esri/layers/GraphicsLayer",
+    "esri/layers/FeatureLayer"
+       
+  ], function(esriConfig,Map, MapView, Graphic, GraphicsLayer, FeatureLayer) {
 
       esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFMjDIPc-ru-jZFtFOH_OKPiwSWHzcSf3sG-gWYqWY54-wpDqmf0rWwD2ThPO2oX9ArjzlGZjJBe5BMSHsq5gsKX8o7Z7M9ddAgHM4S9lQie95awhTLEiQKzfoqlFNUgV_RgrtgWcSEKdPTNxGtElT3G3546KDjwvKxGSYKgiIDEaphpnqgEz_py5lq8EeuYYiO9xgd6MaeLvGjCd-sRYAcePAxi5MZ0hw94qxJulHQjAT1_aPenkLzs";
       const map = new Map({
@@ -26,10 +30,139 @@
 
       const view = new MapView({
           map: map,
-          center: [-97.7431, 30.2672], // Longitude, latitude
-          zoom: 13, // Zoom level
+          center: [-109.04513652294386, 36.99876388222547], // Longitude, latitude
+          zoom: 18, // Zoom level
           container: "viewDiv" // Div element
         });
+
+        const graphicsLayer = new GraphicsLayer();  
+        map.add(graphicsLayer);
+
+
+        const point = { //Create a point  
+        type: "point",  
+        longitude: -109.04524,    //long lat of Stevie Ray Vaughan Statue
+        latitude: 36.99896
+        };
+
+     
+
+        const simpleMarkerSymbol = {  
+        type: "simple-marker",  
+        color: [0, 0, 139],  // Color of blues rock
+        style: "diamond",
+        outline: {  
+          color: [255, 255, 255], // White  
+          width: 1
+        }  
+      };
+
+        const popupTemplate = {
+        title: "{Name}",
+        content: "{Description}"
+        }
+        const pointAttributes = {
+        Name: "Four Corners",
+        Description: "Monument delimiting the meeting point of Utah, Colorado, New Mexico, and Arizona"
+        }
+
+        const pointGraphic = new Graphic({  
+        geometry: point,  
+        symbol: simpleMarkerSymbol,
+        
+        attributes: pointAttributes,
+        popupTemplate: popupTemplate
+        });
+
+        const polyline = {
+          type: "polyline",
+          paths: [[-109.04513652294386, 36.99876388222547],[-109.04093647827226, 36.99326164867209]],
+        };
+
+        const lineSymbol = {
+          type: "simple-line",
+          color: [226, 119, 40],
+          width: 4
+        };
+
+        const lineAttributes = {
+          Name: "4 Corners Monument Rd",
+          Description : "Road leading to the monument"
+        }
+
+        const polylineGraphic = new Graphic ({
+          geometry: polyline,
+          symbol: lineSymbol,
+          attributes : lineAttributes,
+          popupTemplate: popupTemplate
+        });
+        
+
+        const polygon = {
+          type: "polygon",
+          rings: [[-109.04563763975277, 36.99898280649356],[-109.04516959539149, 36.99936410755495], [-109.04471227883288, 36.99898494962173], [-109.04517898195552, 36.99862185836532]]
+        }
+        
+        const fillSymbol = {
+          type: "simple-fill", // autocasts as new SimpleFillSymbol()
+          color: [227, 139, 79, 0.8],
+          outline: {
+            // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 255],
+            width: 1
+          }
+        };
+
+        const polygonGraphic = new Graphic({
+          geometry: polygon,
+          symbol: fillSymbol
+        });
+
+        graphicsLayer.add(polygonGraphic);
+        graphicsLayer.add(pointGraphic);
+        graphicsLayer.add(polylineGraphic);
+        
+       const popupHistor = {
+        "title": "Historic Places",
+        "content": "<b>Name:</b> {RESNAME}"
+      };
+
+        const historLayer = new FeatureLayer({
+        url: "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/nrhp_points_v1/FeatureServer",
+        outFields: ["RESNAME"],
+        popupTemplate: popupHistor
+        
+      });
+
+      
+
+        map.add(historLayer);
+
+      const popupAir = {
+        "title": "Airport",
+        "content": "<b>Name:</b> {Fac_Name}"
+      };
+
+      const airLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/EW_USAIRPORTS/FeatureServer",
+        outFields: ["Fac_Name"],
+        popupTemplate: popupAir
+
+      });
+      
+      map.add(airLayer);
+
+
+      const airportRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://sounny.github.io/agol/outline_local_airport_black_24dp.png",
+          "width": "18px",
+          "height": "18px"
+        }
+      }
+
     });
   </script>
 
