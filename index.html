@@ -143,16 +143,6 @@
         "content": "<b>Name:</b> {Fac_Name}"
       };
 
-      const airLayer = new FeatureLayer({
-        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/EW_USAIRPORTS/FeatureServer",
-        outFields: ["Fac_Name"],
-        popupTemplate: popupAir
-
-      });
-      
-      map.add(airLayer);
-
-
       const airportRenderer = {
         "type": "simple",
         "symbol": {
@@ -161,7 +151,20 @@
           "width": "18px",
           "height": "18px"
         }
-      }
+      };
+
+      const airLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/EW_USAIRPORTS/FeatureServer",
+        renderer: airportRenderer,
+        outFields: ["Fac_Name"],
+        popupTemplate: popupAir
+
+      });
+      
+      map.add(airLayer);
+
+
+      
 
     });
   </script>
